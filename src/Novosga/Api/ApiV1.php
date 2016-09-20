@@ -118,15 +118,20 @@ class ApiV1 extends Api
     {
         $length = \Novosga\Model\Util\Senha::LENGTH;
         // servicos da unidade
+        /**************/
+        //GRUPOJAV 
+        /**************/
+        // Inclusao do join unidade e do atributo nome da unidade
         return $this->em->createQuery("
             SELECT
                 e.id, e.siglaSenha as sigla, e.mensagem, e.numeroSenha as numero,
                 e.local, e.numeroLocal as numeroLocal, e.peso, s.nome as servico,
-                e.prioridade, e.nomeCliente, e.documentoCliente,
+                e.prioridade, e.nomeCliente, e.documentoCliente, z.nome as unidade,
                 $length as length
             FROM
                 Novosga\Model\PainelSenha e
                 JOIN e.servico s
+                JOIN e.unidade z
             WHERE
                 e.unidade = :unidade AND
                 s.id IN (:servicos)
@@ -136,6 +141,9 @@ class ApiV1 extends Api
             ->setParameter(':servicos', $servicos)
             ->setMaxResults(10)
             ->getResult();
+         /**************/
+        //FIM
+        /**************/
     }
 
     public function filaServicos($unidade, $servicos)

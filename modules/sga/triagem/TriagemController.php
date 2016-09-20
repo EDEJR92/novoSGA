@@ -25,7 +25,14 @@ class TriagemController extends ModuleController
         if ($unidade) {
             $this->app()->view()->set('servicos', $this->servicos($unidade));
         }
-        $query = $this->em()->createQuery("SELECT e FROM Novosga\Model\Prioridade e WHERE e.status = 1 AND e.peso > 0 ORDER BY e.nome");
+        /***********************************/
+        //GRUPOJAV 
+        /***********************************/
+        //$query = $this->em()->createQuery("SELECT e FROM Novosga\Model\Prioridade e WHERE e.status = 1 AND e.peso > 0 ORDER BY e.nome");
+        $query = $this->em()->createQuery("SELECT e FROM Novosga\Model\Prioridade e WHERE e.status = 1 AND e.peso > 0 AND e.id != 6 ORDER BY e.nome");
+        /***********************************/
+        //FIM
+        /***********************************/
         $this->app()->view()->set('prioridades', $query->getResult());
     }
 
@@ -144,6 +151,18 @@ class TriagemController extends ModuleController
         $nomeCliente = $context->request()->post('cli_nome', '');
         $documentoCliente = $context->request()->post('cli_doc', '');
         try {
+            /**************/
+            //GRUPOJAV
+            /**************/
+            if (empty($nomeCliente)) {
+                throw new Exception(_('Nome Obrigatório'));
+	    }
+	    if (empty($documentoCliente)) {
+                throw new Exception(_('Documento Obrigatório'));
+	    }
+            /**************/
+            //FIM
+            /**************/
             $service = new AtendimentoService($this->em());
             $response->data = $service->distribuiSenha($unidade, $usuario, $servico, $prioridade, $nomeCliente, $documentoCliente)->jsonSerialize();
             $response->success = true;

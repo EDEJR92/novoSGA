@@ -91,11 +91,14 @@ class AtendimentoService extends MetaModelService
     public function chamarSenha(Unidade $unidade, Atendimento $atendimento)
     {
         $senha = new PainelSenha();
+       
         $senha->setUnidade($unidade);
+
         $senha->setServico($atendimento->getServicoUnidade()->getServico());
         $senha->setNumeroSenha($atendimento->getSenha()->getNumero());
         $senha->setSiglaSenha($atendimento->getSenha()->getSigla());
-        $senha->setMensagem($atendimento->getSenha()->getLegenda());
+        //$senha->setMensagem($atendimento->getSenha()->getLegenda());
+        $senha->setMensagem($unidade->getNome());
         // local
         $senha->setLocal($atendimento->getServicoUnidade()->getLocal()->getNome());
         $senha->setNumeroLocal($atendimento->getLocal());
@@ -105,7 +108,7 @@ class AtendimentoService extends MetaModelService
         // cliente
         $senha->setNomeCliente($atendimento->getCliente()->getNome());
         $senha->setDocumentoCliente($atendimento->getCliente()->getDocumento());
-        
+       
         AppConfig::getInstance()->hook('panel.pre-call', array($atendimento, $senha));
 
         $this->em->persist($senha);
@@ -559,7 +562,14 @@ class AtendimentoService extends MetaModelService
         $novo->setLocal(0);
         $novo->setServicoUnidade($su);
         $novo->setPai($atendimento);
-        $novo->setDataChegada(new DateTime());
+        /********************************************/
+        // GRUPOJAV
+        /********************************************/
+        //$novo->setDataChegada(new DateTime());
+        $novo->setDataChegada($atendimento->getDataChegada());
+        /********************************************/
+        // FIM
+        /********************************************/
         $novo->setStatus(self::SENHA_EMITIDA);
         $novo->setSiglaSenha($atendimento->getSenha()->getSigla());
         $novo->setNumeroSenha($atendimento->getNumeroSenha());

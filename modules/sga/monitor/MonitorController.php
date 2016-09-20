@@ -28,7 +28,8 @@ class MonitorController extends ModuleController
             $this->app()->view()->set('servicos', $this->servicos($unidade, ' e.status = 1 '));
         }
         // lista de prioridades para ser utilizada ao redirecionar senha
-        $query = $this->em()->createQuery("SELECT e FROM Novosga\Model\Prioridade e WHERE e.status = 1 ORDER BY e.peso, e.nome");
+	
+	$query = $this->em()->createQuery("SELECT e FROM Novosga\Model\Prioridade e WHERE e.status = 1 ORDER BY e.peso, e.nome");
         $this->app()->view()->set('prioridades', $query->getResult());
         $this->app()->view()->set('milis', time() * 1000);
     }

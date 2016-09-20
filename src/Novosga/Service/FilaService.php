@@ -15,10 +15,15 @@ use Novosga\Model\Util\UsuarioSessao;
  */
 class FilaService extends ModelService
 {
-    // default queue ordering
+
     public static $ordering = array(
+
+       /********************************************/
+       // GRUPOJAV
+       /********************************************/
+       /*
         // wait time
-        array(
+       array(
             'exp' => '((p.peso + 1) * (CURRENT_TIMESTAMP() - e.dataChegada))',
             'order' => 'DESC',
         ),
@@ -32,6 +37,27 @@ class FilaService extends ModelService
             'exp' => 'e.numeroSenha',
             'order' => 'ASC',
         ),
+       */
+
+        // priority
+        array(
+            'exp' => 'p.peso',
+            'order' => 'DESC',
+        ),
+        // wait time
+       array(
+            'exp' => '((p.peso + 1) * (CURRENT_TIMESTAMP() - e.dataChegada))',
+            'order' => 'DESC',
+        ),
+        // ticket number
+        array(
+            'exp' => 'e.numeroSenha',
+            'order' => 'ASC',
+        ),
+       /********************************************/
+       // FIM
+       /********************************************/
+
     );
 
     /**
@@ -151,7 +177,11 @@ class FilaService extends ModelService
     public function applyOrders(QueryBuilder $builder, Unidade $unidade)
     {
         $ordering = AppConfig::getInstance()->get('queue.ordering');
-        if (is_callable($ordering)) {
+		
+     /*  echo "<pre>";
+       print_r($ordering);
+exit; */      
+ if (is_callable($ordering)) {
             $ordering = $ordering($unidade);
         }
         if (!$ordering || empty($ordering)) {

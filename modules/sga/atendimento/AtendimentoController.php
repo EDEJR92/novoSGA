@@ -90,7 +90,7 @@ class AtendimentoController extends ModuleController
             AppConfig::getInstance()->hook('sga.atendimento.setlocal', array($unidade, $usuario, $numero, $tipo));
 
             $response->success = true;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $response->message = $e->getMessage();
             $response->success = false;
         }
@@ -179,6 +179,8 @@ class AtendimentoController extends ModuleController
                     throw new Exception(_('Já existe um atendimento em andamento'));
                 }
             }
+            // throw new Exception(_($unidade));
+
             // response
             $response->success = $success;
             $this->atendimentoService->chamarSenha($unidade, $proximo);
@@ -190,6 +192,7 @@ class AtendimentoController extends ModuleController
 
         return $response;
     }
+    
 
     private function checkUserConfig(Context $context, UsuarioSessao $usuario)
     {

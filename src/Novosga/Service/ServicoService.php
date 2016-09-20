@@ -156,6 +156,7 @@ class ServicoService extends MetaModelService
                     e.usuario = :usuario AND
                     e.unidade = :unidade AND
                     s.status = 1
+                ORDER BY s.nome
             ")
                 ->setParameter('usuario', $usuario)
                 ->setParameter('unidade', $unidade)
@@ -172,7 +173,11 @@ class ServicoService extends MetaModelService
      */
     public function servicosIndisponiveis($unidade, $usuario)
     {
-        return $this->em->createQuery("
+        return $this->em->createQuery(
+            /**************/
+	    //GRUPOJAV
+	    /**************/ 
+            /*"
                 SELECT
                     e
                 FROM
@@ -184,7 +189,25 @@ class ServicoService extends MetaModelService
                     s.id NOT IN (
                         SELECT s2.id FROM Novosga\Model\ServicoUsuario a JOIN a.servico s2 WHERE a.usuario = :usuario AND a.unidade = :unidade
                     )
-            ")
+            "*/
+	    "
+                SELECT
+                    e
+                FROM
+                    Novosga\Model\ServicoUnidade e
+                    JOIN e.servico s
+                WHERE
+                    e.status = 1 AND
+                    e.unidade = :unidade AND
+                    s.id NOT IN (
+                        SELECT s2.id FROM Novosga\Model\ServicoUsuario a JOIN a.servico s2 WHERE a.usuario = :usuario AND a.unidade = :unidade
+                    )
+		ORDER BY s.nome
+            "
+	    /**************/
+	    //FIM
+ 	    /**************/
+            )
                 ->setParameter('usuario', $usuario)
                 ->setParameter('unidade', $unidade)
                 ->getResult()

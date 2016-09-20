@@ -11,18 +11,16 @@
 <body onload="window.print()">
     <div id="senha">
         <div id="senha-header">
-            {{ atendimento.unidade.nome }}<br />
-            <span class="data">{{ now|date('d/m/Y H:i') }}</span>
+         <h3> {{ atendimento.unidade }} <h3/> 
+         <h4> {{ atendimento.servico }} <h4/> <br />
         </div>
         <div id="senha-body">
             {{ atendimento.senha }}
             <span class="descricao">
-                {{ atendimento.senha.prioridade.nome }}
+                {{ atendimento.nomeCliente }}
             </span>
         </div>
-        <div id="senha-footer">
-            {{ atendimento.unidade.mensagemImpressao }}
-        </div>
+         <span class="data">{{ now|date('d/m/Y H:i') }}</span>
     </div>
 </body>
 </html>
