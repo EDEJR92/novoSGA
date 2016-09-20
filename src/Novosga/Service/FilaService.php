@@ -15,7 +15,6 @@ use Novosga\Model\Util\UsuarioSessao;
  */
 class FilaService extends ModelService
 {
-<<<<<<< HEAD
 
     public static $ordering = array(
 
@@ -26,25 +25,17 @@ class FilaService extends ModelService
         // wait time
        array(
             'exp' => '((p.peso + 1) * (CURRENT_TIMESTAMP() - e.dataChegada))',
-=======
-    // default queue ordering
-    public static $ordering = [
-        // wait time
-        [
-            'exp'   => '((p.peso + 1) * (CURRENT_TIMESTAMP() - e.dataChegada))',
->>>>>>> dce93dcdaa8559683d9dd735eab61b64ecd03336
             'order' => 'DESC',
-        ],
+        ),
         // priority
-        [
-            'exp'   => 'p.peso',
+        array(
+            'exp' => 'p.peso',
             'order' => 'DESC',
-        ],
+        ),
         // ticket number
-        [
-            'exp'   => 'e.numeroSenha',
+        array(
+            'exp' => 'e.numeroSenha',
             'order' => 'ASC',
-<<<<<<< HEAD
         ),
        */
 
@@ -68,10 +59,6 @@ class FilaService extends ModelService
        /********************************************/
 
     );
-=======
-        ],
-    ];
->>>>>>> dce93dcdaa8559683d9dd735eab61b64ecd03336
 
     /**
      * Retorna a fila de atendimentos do usuario.
@@ -83,7 +70,7 @@ class FilaService extends ModelService
      */
     public function atendimentos(UsuarioSessao $usuario, $maxResults = 0)
     {
-        $ids = [0];
+        $ids = array(0);
         $servicos = $usuario->getServicos();
         foreach ($servicos as $s) {
             $ids[] = $s->getServico()->getId();
@@ -102,7 +89,7 @@ class FilaService extends ModelService
             }
             $rs = $this->atendimentosUsuario($usuario, $ids, $maxResults, $cond);
             // se a lista veio vazia, tenta pegar qualquer um
-            if (count($rs) === 0) {
+            if (sizeof($rs) === 0) {
                 $rs = $this->atendimentosUsuario($usuario, $ids, $maxResults);
             }
         }
@@ -113,7 +100,8 @@ class FilaService extends ModelService
     private function atendimentosUsuario(UsuarioSessao $usuario, $servicos, $maxResults = 0, $where = '')
     {
         $builder = $this->builder()
-                ->where('e.status = :status AND su.unidade = :unidade AND s.id IN (:servicos)');
+                ->where('e.status = :status AND su.unidade = :unidade AND s.id IN (:servicos)')
+        ;
         if (!empty($where)) {
             $builder->andWhere($where);
         }
@@ -123,7 +111,8 @@ class FilaService extends ModelService
         $query = $builder->getQuery()
                 ->setParameter('status', AtendimentoService::SENHA_EMITIDA)
                 ->setParameter('unidade', $usuario->getUnidade()->getId())
-                ->setParameter('servicos', $servicos);
+                ->setParameter('servicos', $servicos)
+        ;
 
         if ($maxResults > 0) {
             $query->setMaxResults($maxResults);
@@ -151,7 +140,8 @@ class FilaService extends ModelService
         }
 
         $builder = $this->builder()
-                ->where('e.status = :status AND su.unidade = :unidade AND su.servico = :servico');
+                ->where('e.status = :status AND su.unidade = :unidade AND su.servico = :servico')
+        ;
 
         $this->applyOrders($builder, $unidade);
 
@@ -175,7 +165,8 @@ class FilaService extends ModelService
             ->join('e.servicoUnidade', 'su')
             ->join('su.servico', 's')
             ->join('e.usuarioTriagem', 'ut')
-            ->leftJoin('e.usuario', 'u');
+            ->leftJoin('e.usuario', 'u')
+        ;
     }
 
     /**
