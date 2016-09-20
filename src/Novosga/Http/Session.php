@@ -34,7 +34,7 @@ class Session
     /**
      * Define ou adicionar um valor na sessao.
      *
-     * @param String $key
+     * @param string $key
      * @param mixed  $valor
      */
     public function set($key, $valor)
@@ -45,7 +45,7 @@ class Session
     /**
      * Define ou adicionar um valor na sessao Global.
      *
-     * @param String $key
+     * @param string $key
      * @param mixed  $valor
      */
     public function setGlobal($key, $valor)
@@ -56,7 +56,7 @@ class Session
     /**
      * Retorna o valor da chave guardada na sessao.
      *
-     * @param String $key
+     * @param string $key
      *
      * @return mixed
      */
@@ -73,7 +73,7 @@ class Session
     /**
      * Retorna se a chave informada ja esta guardada na sessao.
      *
-     * @param String $key
+     * @param string $key
      *
      * @return bool
      */
@@ -95,7 +95,7 @@ class Session
     /**
      * Remove da sessao a chave informada.
      *
-     * @param String $key
+     * @param string $key
      */
     public function del($key)
     {
@@ -116,7 +116,7 @@ class Session
      */
     public function destroy()
     {
-        $_SESSION = array();
+        $_SESSION = [];
         session_destroy();
     }
 }
@@ -128,7 +128,7 @@ class Session
  */
 class SessionCache
 {
-    private static $cache = array();
+    private static $cache = [];
 
     public static function set($key, $value)
     {
@@ -161,7 +161,7 @@ class SessionCache
 
     public static function clear()
     {
-        $_SESSION = array();
-        self::$cache = array();
+        $_SESSION = [];
+        self::$cache = [];
     }
 }

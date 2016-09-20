@@ -49,7 +49,7 @@ namespace Novosga\Model;
     /**
      * Define a chave do Modulo.
      *
-     * @param String $chave
+     * @param string $chave
      */
     public function setChave($chave)
     {
@@ -59,7 +59,7 @@ namespace Novosga\Model;
     /**
      * Retorna a chave do Modulo.
      *
-     * @return String
+     * @return string
      */
     public function getChave()
     {
@@ -69,7 +69,7 @@ namespace Novosga\Model;
     /**
      * Define o nome do Modulo.
      *
-     * @param String $nome
+     * @param string $nome
      */
     public function setNome($nome)
     {
@@ -79,7 +79,7 @@ namespace Novosga\Model;
     /**
      * Retorna o nome do Modulo.
      *
-     * @return String
+     * @return string
      */
     public function getNome()
     {
@@ -141,7 +141,7 @@ namespace Novosga\Model;
      }
 
     /**
-     * @return String
+     * @return string
      */
     public function toString()
     {
@@ -150,13 +150,13 @@ namespace Novosga\Model;
 
      public function jsonSerialize()
      {
-         return array(
-            'id' => $this->getId(),
-            'nome' => $this->getNome(),
-            'chave' => $this->getChave(),
+         return [
+            'id'        => $this->getId(),
+            'nome'      => $this->getNome(),
+            'chave'     => $this->getChave(),
             'descricao' => $this->getDescricao(),
-            'status' => $this->getStatus(),
-            'tipo' => $this->getTipo(),
-        );
+            'status'    => $this->getStatus(),
+            'tipo'      => $this->getTipo(),
+        ];
      }
  }

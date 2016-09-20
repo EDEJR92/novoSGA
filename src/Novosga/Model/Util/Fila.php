@@ -2,8 +2,8 @@
 
 namespace Novosga\Model\Util;
 
-use Novosga\Model\Model;
 use Novosga\Model\Atendimento;
+use Novosga\Model\Model;
 use Novosga\Util\Arrays;
 
 /**
@@ -11,9 +11,9 @@ use Novosga\Util\Arrays;
  */
 class Fila extends Model
 {
-    private $atendimentos = array();
+    private $atendimentos = [];
 
-    public function __construct(array $atendimentos = array())
+    public function __construct(array $atendimentos = [])
     {
         $this->setAtendimentos($atendimentos);
     }
@@ -86,7 +86,7 @@ class Fila extends Model
      */
     public function size()
     {
-        return sizeof($this->atendimentos);
+        return count($this->atendimentos);
     }
 
     /**
@@ -102,7 +102,7 @@ class Fila extends Model
     /**
      * Retorna quantidade total da fila.
      *
-     * @return String
+     * @return string
      */
     public function toString()
     {
@@ -112,7 +112,7 @@ class Fila extends Model
     /**
      * Retorna resultado do método toString.
      *
-     * @return String
+     * @return string
      */
     public function __tostring()
     {

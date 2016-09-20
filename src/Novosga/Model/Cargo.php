@@ -29,7 +29,7 @@ class Cargo extends TreeModel
     /**
      * Define o nome do Cargo.
      *
-     * @param String $nome
+     * @param string $nome
      */
     public function setNome($nome)
     {
@@ -49,7 +49,7 @@ class Cargo extends TreeModel
     /**
      * Define a descrição do Cargo.
      *
-     * @param String $nome
+     * @param string $nome
      */
     public function setDescricao($descricao)
     {
@@ -59,7 +59,7 @@ class Cargo extends TreeModel
     /**
      * Retorna o nome do Cargo.
      *
-     * @return String
+     * @return string
      */
     public function getNome()
     {
@@ -113,13 +113,13 @@ class Cargo extends TreeModel
 
     public function jsonSerialize()
     {
-        return array(
-            'id' => $this->getId(),
-            'nome' => $this->getNome(),
+        return [
+            'id'        => $this->getId(),
+            'nome'      => $this->getNome(),
             'descricao' => $this->getDescricao(),
-            'left' => $this->getLeft(),
-            'right' => $this->getRight(),
-            'level' => $this->getLevel(),
-        );
+            'left'      => $this->getLeft(),
+            'right'     => $this->getRight(),
+            'level'     => $this->getLevel(),
+        ];
     }
 }
