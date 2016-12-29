@@ -145,10 +145,12 @@ SGA.Monitor = {
             });
         },
 
-        transfere: function(id, numero) {
+        transfere: function(id, numero, servico) {
             SGA.dialogs.modal(SGA.Monitor.Senha.dialogTransfere);
             $('#transfere_id').val(id);
             $('#transfere_numero').text(numero);
+            var transfere_servico = servico;
+	    alert(servico);
         },
 
         transferir: function() {

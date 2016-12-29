@@ -252,7 +252,7 @@ class __TwigTemplate_61afab573846c89f73e77236546167eb0153fa8dd5aee7f1b799f757df1
         echo "                </button>
                 <button id=\"btn-transferir\"
                         class=\"btn btn-default\"
-                        onclick=\"SGA.Monitor.Senha.transfere(\$('#senha_id').val(), \$('#senha_numero').text())\">
+                        onclick=\"SGA.Monitor.Senha.transfere(\$('#senha_id').val(), \$('#senha_numero').text(), \$('#senha_servico').text())\">
                     ";
         // line 126
         echo gettext("Transferir / Alterar senha");
@@ -306,7 +306,11 @@ class __TwigTemplate_61afab573846c89f73e77236546167eb0153fa8dd5aee7f1b799f757df1
             // line 156
             echo "                        <option value=\"";
             echo twig_escape_filter($this->env, $this->getAttribute($this->getAttribute($context["su"], "servico", array()), "id", array()), "html", null, true);
-            echo "\">";
+            echo "\"";
+            if (($this->getAttribute($this->getAttribute($context["su"], "servico", array()), "nome", array()) == (isset($context["transfere_servico"]) ? $context["transfere_servico"] : null))) {
+                echo "selected=\"selected\"";
+            }
+            echo ">";
             echo twig_escape_filter($this->env, $this->getAttribute($this->getAttribute($context["su"], "servico", array()), "nome", array()), "html", null, true);
             echo "</option>
                         ";
@@ -396,7 +400,7 @@ class __TwigTemplate_61afab573846c89f73e77236546167eb0153fa8dd5aee7f1b799f757df1
 
     public function getDebugInfo()
     {
-        return array (  380 => 189,  376 => 188,  372 => 187,  363 => 181,  354 => 174,  352 => 173,  343 => 166,  332 => 164,  328 => 163,  323 => 161,  318 => 158,  307 => 156,  303 => 155,  298 => 153,  291 => 149,  283 => 144,  276 => 139,  268 => 132,  266 => 131,  260 => 127,  258 => 126,  252 => 122,  250 => 121,  238 => 112,  231 => 108,  226 => 106,  218 => 101,  211 => 97,  204 => 93,  197 => 89,  190 => 85,  183 => 81,  176 => 77,  169 => 73,  164 => 71,  156 => 66,  149 => 61,  134 => 48,  130 => 47,  126 => 46,  122 => 45,  118 => 44,  114 => 43,  110 => 42,  106 => 41,  97 => 35,  92 => 33,  84 => 28,  77 => 23,  73 => 20,  60 => 15,  53 => 14,  49 => 13,  45 => 11,  43 => 10,  36 => 6,  31 => 3,  28 => 2,  11 => 1,);
+        return array (  384 => 189,  380 => 188,  376 => 187,  367 => 181,  358 => 174,  356 => 173,  347 => 166,  336 => 164,  332 => 163,  327 => 161,  322 => 158,  307 => 156,  303 => 155,  298 => 153,  291 => 149,  283 => 144,  276 => 139,  268 => 132,  266 => 131,  260 => 127,  258 => 126,  252 => 122,  250 => 121,  238 => 112,  231 => 108,  226 => 106,  218 => 101,  211 => 97,  204 => 93,  197 => 89,  190 => 85,  183 => 81,  176 => 77,  169 => 73,  164 => 71,  156 => 66,  149 => 61,  134 => 48,  130 => 47,  126 => 46,  122 => 45,  118 => 44,  114 => 43,  110 => 42,  106 => 41,  97 => 35,  92 => 33,  84 => 28,  77 => 23,  73 => 20,  60 => 15,  53 => 14,  49 => 13,  45 => 11,  43 => 10,  36 => 6,  31 => 3,  28 => 2,  11 => 1,);
     }
 }
 /* {% extends "module.html.twig" %}*/
@@ -523,7 +527,7 @@ class __TwigTemplate_61afab573846c89f73e77236546167eb0153fa8dd5aee7f1b799f757df1
 /*                 </button>*/
 /*                 <button id="btn-transferir"*/
 /*                         class="btn btn-default"*/
-/*                         onclick="SGA.Monitor.Senha.transfere($('#senha_id').val(), $('#senha_numero').text())">*/
+/*                         onclick="SGA.Monitor.Senha.transfere($('#senha_id').val(), $('#senha_numero').text(), $('#senha_servico').text())">*/
 /*                     {% trans %}Transferir / Alterar senha{% endtrans %}*/
 /*                 </button>*/
 /*                 <button id="btn-cancelar"*/
@@ -554,7 +558,7 @@ class __TwigTemplate_61afab573846c89f73e77236546167eb0153fa8dd5aee7f1b799f757df1
 /*                     <label for="transfere_servico">{% trans %}Novo serviço{% endtrans %}</label>*/
 /*                     <select id="transfere_servico" class="form-control">*/
 /*                         {% for su in servicos %}*/
-/*                         <option value="{{ su.servico.id }}">{{ su.servico.nome }}</option>*/
+/*                         <option value="{{ su.servico.id }}"{% if su.servico.nome == transfere_servico %}selected="selected"{% endif %}>{{ su.servico.nome }}</option>*/
 /*                         {% endfor %}*/
 /*                     </select>*/
 /*                 </div>*/
@@ -591,3 +595,4 @@ class __TwigTemplate_61afab573846c89f73e77236546167eb0153fa8dd5aee7f1b799f757df1
 /*     SGA.Monitor.init();*/
 /* </script>*/
 /* {% endblock %}*/
+/* */
