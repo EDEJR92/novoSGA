@@ -44,15 +44,15 @@ class FilaService extends ModelService
             'exp' => 'p.peso',
             'order' => 'DESC',
         ),
-        // wait time
-       array(
-            'exp' => '((p.peso + 1) * (CURRENT_TIMESTAMP() - e.dataChegada))',
-            'order' => 'DESC',
-        ),
         // ticket number
         array(
             'exp' => 'e.numeroSenha',
             'order' => 'ASC',
+        ),
+        // wait time
+       array(
+            'exp' => '((p.peso + 1) * (CURRENT_TIMESTAMP() - e.dataChegada))',
+            'order' => 'DESC',
         ),
        /********************************************/
        // FIM

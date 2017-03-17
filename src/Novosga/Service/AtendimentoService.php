@@ -566,7 +566,11 @@ class AtendimentoService extends MetaModelService
         // GRUPOJAV
         /********************************************/
         //$novo->setDataChegada(new DateTime());
-        $novo->setDataChegada($atendimento->getDataChegada());
+        if ($atendimento->getStatus() != self::ERRO_TRIAGEM) {
+            $novo->setDataChegada(new DateTime());
+        } else {
+            $novo->setDataChegada($atendimento->getDataChegada());
+        }
         /********************************************/
         // FIM
         /********************************************/

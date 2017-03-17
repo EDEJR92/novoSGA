@@ -404,8 +404,9 @@ class EstatisticasController extends ModuleController
                 e.dataChegada >= :dataInicial AND
                 e.dataChegada <= :dataFinal
             ORDER BY
-                e.dataChegada,
+                e.siglaSenha,
                 e.numeroSenha,
+                e.dataChegada,
                 e.dataChamada
         ");
         $query->setParameter('status', AtendimentoService::ATENDIMENTO_ENCERRADO_CODIFICADO);
@@ -437,8 +438,9 @@ class EstatisticasController extends ModuleController
                 e.dataChegada >= :dataInicial AND
                 e.dataChegada <= :dataFinal
             ORDER BY
-                e.dataChegada,
+                e.siglaSenha,
                 e.numeroSenha,
+                e.dataChegada,
                 e.dataChamada
         ");
         $query->setParameter('dataInicial', $dataInicial);
