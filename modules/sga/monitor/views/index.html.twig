@@ -153,7 +153,7 @@
                     <label for="transfere_servico">{% trans %}Novo serviço{% endtrans %}</label>
                     <select id="transfere_servico" class="form-control">
                         {% for su in servicos %}
-                        <option value="{{ su.servico.id }}"{% if su.servico.nome == transfere_servico %}selected="selected"{% endif %}>{{ su.servico.nome }}</option>
+                        <option value="{{ su.servico.id }}"{% if su.servico.nome == servico_atual %}selected="selected"{% endif %}>{{ su.servico.nome }}</option>
                         {% endfor %}
                     </select>
                 </div>

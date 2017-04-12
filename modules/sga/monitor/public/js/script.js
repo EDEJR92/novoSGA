@@ -149,8 +149,8 @@ SGA.Monitor = {
             SGA.dialogs.modal(SGA.Monitor.Senha.dialogTransfere);
             $('#transfere_id').val(id);
             $('#transfere_numero').text(numero);
-            var transfere_servico = servico;
-	    alert(servico);
+            var servico_atual = servico;
+	    alert(servico_atual);
         },
 
         transferir: function() {
