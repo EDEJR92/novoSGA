@@ -187,7 +187,7 @@ CREATE TABLE painel_senha (
     unidade_id integer NOT NULL,
     servico_id integer NOT NULL,
     num_senha integer NOT NULL,
-    sig_senha varchar(1) NOT NULL,
+    sig_senha varchar(2) NOT NULL,
     msg_senha varchar(20) NOT NULL,
     local varchar(15) NOT NULL,
     num_local smallint NOT NULL,
