@@ -105,7 +105,7 @@ abstract class AbstractAtendimento extends SequencialModel
     protected $documentoCliente;
 
     /**
-     * @Column(type="string", name="sigla_senha", length=1, nullable=false)
+     * @Column(type="string", name="sigla_senha", length=2, nullable=false)
      */
     protected $siglaSenha;
 

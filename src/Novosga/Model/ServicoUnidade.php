@@ -33,7 +33,7 @@ class ServicoUnidade extends Model implements \JsonSerializable
     protected $local;
 
     /**
-     * @Column(type="string", name="sigla", length=1, nullable=false)
+     * @Column(type="string", name="sigla", length=2, nullable=false)
      */
     protected $sigla;
 
