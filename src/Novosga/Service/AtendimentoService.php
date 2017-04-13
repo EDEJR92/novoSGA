@@ -601,7 +601,7 @@ class AtendimentoService extends MetaModelService
      *
      * @return bool
      */
-    public function transferir(Atendimento $atendimento, Unidade $unidade, $novoServico, $novaPrioridade)
+    public function transferir(Atendimento $atendimento, Unidade $unidade, $novoServico, $novaPrioridade, $usuario)
     {
         AppConfig::getInstance()->hook('attending.pre-transfer', $atendimento, $unidade, $novoServico, $novaPrioridade);
 
@@ -611,7 +611,8 @@ class AtendimentoService extends MetaModelService
                     Novosga\Model\Atendimento e
                 SET
                     e.servico = :servico,
-                    e.prioridade = :prioridade
+                    e.prioridade = :prioridade,
+                    e.usuarioTriagem = :usuario
                 WHERE
                     e.id = :id AND
                     e.unidade = :unidade AND
@@ -619,6 +620,7 @@ class AtendimentoService extends MetaModelService
                 ')
                 ->setParameter('servico', $novoServico)
                 ->setParameter('prioridade', $novaPrioridade)
+                ->setParameter('usuario', $usuario)
                 ->setParameter('id', $atendimento)
                 ->setParameter('unidade', $unidade)
                 ->execute() > 0
