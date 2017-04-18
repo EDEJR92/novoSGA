@@ -122,7 +122,7 @@
                 </button>
                 <button id="btn-transferir"
                         class="btn btn-default"
-                        onclick="SGA.Monitor.Senha.transfere($('#senha_id').val(), $('#senha_numero').text(), $('#senha_servico').text())">
+                        onclick="SGA.Monitor.Senha.transfere($('#senha_id').val(), $('#senha_numero').text(), $('#senha_servico').text(), $('#senha_prioridade').text())">
                     {% trans %}Transferir / Alterar senha{% endtrans %}
                 </button>
                 <button id="btn-cancelar"
@@ -151,10 +151,10 @@
                 </div>
                 <div class="form-group">
                     <label for="transfere_servico">{% trans %}Novo serviço{% endtrans %}</label>
-                    <select id="transfere_servico" class="form-control">
-                        {% for su in servicos %}
-                        <option value="{{ su.servico.id }}"{% if su.servico.nome == servico_atual %}selected="selected"{% endif %}>{{ su.servico.nome }}</option>
-                        {% endfor %}
+                    <select id="transfere_servico" class="form-control"> 
+                       {% for su in servicos %}
+                       <option value="{{ su.servico.id }}">{{ su.servico.nome}}</option>
+                       {% endfor %}
                     </select>
                 </div>
                 <div class="form-group">

@@ -63,7 +63,7 @@ class MonitorController extends ModuleController
                             foreach ($rs as $atendimento) {
                                 $arr = $atendimento->jsonSerialize(true);
                                 $fila[] = $arr;
-                            }
+                            }                            
                             $response->data['servicos'][$su->getServico()->getId()] = $fila;
                             ++$response->data['total'];
                         }
@@ -200,6 +200,7 @@ class MonitorController extends ModuleController
     {
         $response = new JsonResponse();
         try {
+            $usuario = $context->getUser();
             $unidade = $context->getUser()->getUnidade();
             if (!$unidade) {
                 throw new Exception(_('Nenhuma unidade selecionada'));
@@ -207,7 +208,7 @@ class MonitorController extends ModuleController
             $id = (int) $context->request()->post('id');
             $atendimento = $this->getAtendimento($unidade, $id);
             $service = new AtendimentoService($this->em());
-            $response->success = $service->cancelar($atendimento, $unidade);
+            $response->success = $service->cancelar($atendimento, $unidade, $usuario);
         } catch (Exception $e) {
             $response->message = $e->getMessage();
         }

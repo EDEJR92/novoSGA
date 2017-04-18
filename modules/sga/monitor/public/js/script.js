@@ -145,14 +145,19 @@ SGA.Monitor = {
             });
         },
 
-        transfere: function(id, numero, servico) {
+        transfere: function(id, numero, servico, prioridade) {
             SGA.dialogs.modal(SGA.Monitor.Senha.dialogTransfere);
             $('#transfere_id').val(id);
             $('#transfere_numero').text(numero);
-            var servico_atual = servico;
-	    alert(servico_atual);
+            $("select#transfere_servico option").filter(function() {
+                //may want to use $.trim in here
+                return $(this).text() == servico; 
+            }).prop('selected', true);
+            $("select#transfere_prioridade option").filter(function() {
+                //may want to use $.trim in here
+                return $(this).text() == prioridade; 
+            }).prop('selected', true);
         },
-
         transferir: function() {
             SGA.ajax({
                 url: SGA.url('transferir'),

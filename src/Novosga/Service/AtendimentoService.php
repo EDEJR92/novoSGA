@@ -25,8 +25,8 @@ use PDO;
  *
  * @author Rogerio Lino <rogeriolino@gmail.com>
  */
-class AtendimentoService extends MetaModelService
-{
+class AtendimentoService extends MetaModelService {
+
     // estados do atendimento
     const SENHA_EMITIDA = 1;
     const CHAMADO_PELA_MESA = 2;
@@ -37,8 +37,7 @@ class AtendimentoService extends MetaModelService
     const ERRO_TRIAGEM = 7;
     const ATENDIMENTO_ENCERRADO_CODIFICADO = 8;
 
-    public static function situacoes()
-    {
+    public static function situacoes() {
         return array(
             self::SENHA_EMITIDA => _('Senha emitida'),
             self::CHAMADO_PELA_MESA => _('Chamado pela mesa'),
@@ -51,20 +50,17 @@ class AtendimentoService extends MetaModelService
         );
     }
 
-    public static function nomeSituacao($status)
-    {
+    public static function nomeSituacao($status) {
         $arr = self::situacoes();
 
         return $arr[$status];
     }
 
-    protected function getMetaClass()
-    {
+    protected function getMetaClass() {
         return 'Novosga\Model\AtendimentoMeta';
     }
 
-    protected function getMetaFieldname()
-    {
+    protected function getMetaFieldname() {
         return 'atendimento';
     }
 
@@ -77,8 +73,7 @@ class AtendimentoService extends MetaModelService
      *
      * @return \Novosga\Model\AtendimentoMeta
      */
-    public function meta(Atendimento $atendimento, $name, $value = null)
-    {
+    public function meta(Atendimento $atendimento, $name, $value = null) {
         return $this->modelMetadata($atendimento, $name, $value);
     }
 
@@ -88,10 +83,9 @@ class AtendimentoService extends MetaModelService
      * @param Unidade     $unidade
      * @param Atendimento $atendimento
      */
-    public function chamarSenha(Unidade $unidade, Atendimento $atendimento)
-    {
+    public function chamarSenha(Unidade $unidade, Atendimento $atendimento) {
         $senha = new PainelSenha();
-       
+
         $senha->setUnidade($unidade);
 
         $senha->setServico($atendimento->getServicoUnidade()->getServico());
@@ -108,7 +102,7 @@ class AtendimentoService extends MetaModelService
         // cliente
         $senha->setNomeCliente($atendimento->getCliente()->getNome());
         $senha->setDocumentoCliente($atendimento->getCliente()->getDocumento());
-       
+
         AppConfig::getInstance()->hook('panel.pre-call', array($atendimento, $senha));
 
         $this->em->persist($senha);
@@ -125,8 +119,7 @@ class AtendimentoService extends MetaModelService
      *
      * @throws Exception
      */
-    public function acumularAtendimentos($unidade = 0)
-    {
+    public function acumularAtendimentos($unidade = 0) {
         if ($unidade instanceof Unidade) {
             $unidadeId = $unidade->getId();
         } else {
@@ -272,8 +265,7 @@ class AtendimentoService extends MetaModelService
         AppConfig::getInstance()->hook('attending.reset', $unidade);
     }
 
-    public static function isNumeracaoServico()
-    {
+    public static function isNumeracaoServico() {
         if (App::isInstalled()) {
             $db = \Novosga\Config\DatabaseConfig::getInstance();
             $tipoNumeracao = \Novosga\Model\Configuracao::get($db->createEntityManager(), Senha::TIPO_NUMERACAO);
@@ -285,8 +277,7 @@ class AtendimentoService extends MetaModelService
         return false;
     }
 
-    public function buscaAtendimento(Unidade $unidade, $id)
-    {
+    public function buscaAtendimento(Unidade $unidade, $id) {
         $query = $this->em->createQuery("SELECT e FROM Novosga\Model\Atendimento e JOIN e.servicoUnidade su WHERE e.id = :id AND su.unidade = :unidade");
         $query->setParameter('id', (int) $id);
         $query->setParameter('unidade', $unidade->getId());
@@ -294,19 +285,29 @@ class AtendimentoService extends MetaModelService
         return $query->getOneOrNullResult();
     }
 
-    public function buscaAtendimentos(Unidade $unidade, $senha)
-    {
+    public function buscaAtendimentos(Unidade $unidade, $senha) {
         $field = self::isNumeracaoServico() ? 'numeroSenhaServico' : 'numeroSenha';
         $cond = '';
-        $sigla = strtoupper(substr($senha, 0, 1));
-        // verificando se a letra foi informada (o primeiro caracter diferente do valor convertido para int)
+        
+        // Verifica se esta procurando por sigla de 2 caracteres
+        $sigla = strtoupper(substr($senha, 0, 2));
         $porSigla = ctype_alpha($sigla);
         if ($porSigla) {
             $cond = 'e.siglaSenha = :sigla AND';
-            $numeroSenha = (int) substr($senha, 1);
+            $numeroSenha = (int) substr($senha, 2);
         } else {
-            $numeroSenha = (int) $senha;
+            // Verifica se esta procurando por sigla de 1 caractere
+            $sigla = strtoupper(substr($senha, 0, 1));
+            $porSigla = ctype_alpha($sigla);
+            if ($porSigla) {
+                $cond = 'e.siglaSenha = :sigla AND';
+                $numeroSenha = (int) substr($senha, 1);
+            } else {
+                // Se nao procurar por sigla procura pelo numero
+                $numeroSenha = (int) $senha;
+            }
         }
+
         $query = $this->em->createQuery("
             SELECT
                 e
@@ -331,15 +332,14 @@ class AtendimentoService extends MetaModelService
         return $query->getResult();
     }
 
-    public function chamar(Atendimento $atendimento, Usuario $usuario, $local)
-    {
+    public function chamar(Atendimento $atendimento, Usuario $usuario, $local) {
         AppConfig::getInstance()->hook('attending.pre-call', array($atendimento, $usuario, $local));
 
         $this->em->getConnection()->beginTransaction();
-        
+
         try {
             $this->em->lock($atendimento, LockMode::PESSIMISTIC_WRITE);
-            
+
             $atendimento->setUsuario($usuario);
             $atendimento->setLocal($local);
             $atendimento->setStatus(self::CHAMADO_PELA_MESA);
@@ -363,8 +363,7 @@ class AtendimentoService extends MetaModelService
      *
      * @return Atendimento
      */
-    public function atendimentoAndamento($usuario)
-    {
+    public function atendimentoAndamento($usuario) {
         $status = array(
             self::CHAMADO_PELA_MESA,
             self::ATENDIMENTO_INICIADO,
@@ -372,10 +371,10 @@ class AtendimentoService extends MetaModelService
         );
         try {
             return $this->em
-                ->createQuery("SELECT e FROM Novosga\Model\Atendimento e WHERE e.usuario = :usuario AND e.status IN (:status)")
-                ->setParameter('usuario', $usuario)
-                ->setParameter('status', $status)
-                ->getOneOrNullResult();
+                            ->createQuery("SELECT e FROM Novosga\Model\Atendimento e WHERE e.usuario = :usuario AND e.status IN (:status)")
+                            ->setParameter('usuario', $usuario)
+                            ->setParameter('status', $status)
+                            ->getOneOrNullResult();
         } catch (\Doctrine\ORM\NonUniqueResultException $e) {
             /*
              * caso tenha mais de um atendimento preso ao usuario,
@@ -383,10 +382,10 @@ class AtendimentoService extends MetaModelService
              * BUG #213
              */
             $this->em
-                ->createQuery('UPDATE Novosga\Model\Atendimento e SET e.status = 1, e.usuario = NULL WHERE e.usuario = :usuario AND e.status IN (:status)')
-                ->setParameter('usuario', $usuario)
-                ->setParameter('status', $status)
-                ->execute();
+                    ->createQuery('UPDATE Novosga\Model\Atendimento e SET e.status = 1, e.usuario = NULL WHERE e.usuario = :usuario AND e.status IN (:status)')
+                    ->setParameter('usuario', $usuario)
+                    ->setParameter('status', $status)
+                    ->execute();
 
             return null;
         }
@@ -406,8 +405,7 @@ class AtendimentoService extends MetaModelService
      *
      * @throws Exception
      */
-    public function distribuiSenha($unidade, $usuario, $servico, $prioridade, $nomeCliente, $documentoCliente)
-    {
+    public function distribuiSenha($unidade, $usuario, $servico, $prioridade, $nomeCliente, $documentoCliente) {
         // verificando a unidade
         if (!($unidade instanceof Unidade)) {
             $unidade = $this->em->find("Novosga\Model\Unidade", (int) $unidade);
@@ -473,7 +471,7 @@ class AtendimentoService extends MetaModelService
         AppConfig::getInstance()->hook('attending.pre-create', array($atendimento));
 
         $this->em->beginTransaction();
-        
+
         try {
             $attempts = 5;
             $this->em->lock($contador, LockMode::PESSIMISTIC_WRITE);
@@ -493,10 +491,10 @@ class AtendimentoService extends MetaModelService
                                 ORDER BY
                                     e.numeroSenhaServico DESC
                             ')
-                                ->setParameter('unidade', $unidade)
-                                ->setParameter('sigla', $su->getSigla())
-                                ->setMaxResults(1)
-                                ->getSingleScalarResult()
+                                        ->setParameter('unidade', $unidade)
+                                        ->setParameter('sigla', $su->getSigla())
+                                        ->setMaxResults(1)
+                                        ->getSingleScalarResult()
                         ;
                     } catch (Exception $e) {
                         $numeroSenhaServico = 0;
@@ -550,8 +548,7 @@ class AtendimentoService extends MetaModelService
      *
      * @return Atendimento
      */
-    public function redirecionar(Atendimento $atendimento, Usuario $usuario, $unidade, $servico)
-    {
+    public function redirecionar(Atendimento $atendimento, Usuario $usuario, $unidade, $servico) {
         // copiando a senha do atendimento atual
         $service = new ServicoService($this->em);
         $su = $service->servicoUnidade($unidade, $servico);
@@ -601,9 +598,20 @@ class AtendimentoService extends MetaModelService
      *
      * @return bool
      */
-    public function transferir(Atendimento $atendimento, Unidade $unidade, $novoServico, $novaPrioridade, $usuario)
-    {
-        AppConfig::getInstance()->hook('attending.pre-transfer', $atendimento, $unidade, $novoServico, $novaPrioridade);
+    public function transferir(Atendimento $atendimento, Unidade $unidade, $novoServico, $novaPrioridade, $usuario) {
+        // verificando o usuario na sessao
+        if (!($usuario instanceof Usuario) || $usuario instanceof UsuarioSessao) {
+            if ($usuario instanceof UsuarioSessao) {
+                $usuario = $usuario->getWrapped();
+            } else {
+                $usuario = $this->em->find("Novosga\Model\Usuario", (int) $usuario);
+            }
+        }
+        if (!$usuario) {
+            throw new Exception(_('Nenhum usuário na sessão'));
+        }
+
+        AppConfig::getInstance()->hook('attending.pre-transfer', $atendimento, $unidade, $novoServico, $novaPrioridade, $usuario);
 
         // transfere apenas se a data fim for nula (nao finalizados)
         $success = $this->em->createQuery('
@@ -618,12 +626,12 @@ class AtendimentoService extends MetaModelService
                     e.unidade = :unidade AND
                     e.dataFim IS NULL
                 ')
-                ->setParameter('servico', $novoServico)
-                ->setParameter('prioridade', $novaPrioridade)
-                ->setParameter('usuario', $usuario)
-                ->setParameter('id', $atendimento)
-                ->setParameter('unidade', $unidade)
-                ->execute() > 0
+                        ->setParameter('servico', $novoServico)
+                        ->setParameter('prioridade', $novaPrioridade)
+                        ->setParameter('usuario', $usuario)
+                        ->setParameter('id', $atendimento)
+                        ->setParameter('unidade', $unidade)
+                        ->execute() > 0
         ;
 
         if ($success) {
@@ -642,8 +650,19 @@ class AtendimentoService extends MetaModelService
      *
      * @return bool
      */
-    public function cancelar(Atendimento $atendimento, Unidade $unidade)
-    {
+    public function cancelar(Atendimento $atendimento, Unidade $unidade, $usuario) {
+        // verificando o usuario na sessao
+        if (!($usuario instanceof Usuario) || $usuario instanceof UsuarioSessao) {
+            if ($usuario instanceof UsuarioSessao) {
+                $usuario = $usuario->getWrapped();
+            } else {
+                $usuario = $this->em->find("Novosga\Model\Usuario", (int) $usuario);
+            }
+        }
+        if (!$usuario) {
+            throw new Exception(_('Nenhum usuário na sessão'));
+        }
+        
         AppConfig::getInstance()->hook('attending.pre-cancel', $atendimento);
 
         // cancela apenas se a data fim for nula
@@ -652,17 +671,19 @@ class AtendimentoService extends MetaModelService
                     Novosga\Model\Atendimento e
                 SET
                     e.status = :status,
-                    e.dataFim = :data
+                    e.dataFim = :data,
+                    e.usuario = :usuario
                 WHERE
                     e.id = :id AND
                     e.unidade = :unidade AND
                     e.dataFim IS NULL
                 ')
-                ->setParameter('status', self::SENHA_CANCELADA)
-                ->setParameter('data', new DateTime())
-                ->setParameter('id', $atendimento)
-                ->setParameter('unidade', $unidade)
-                ->execute() > 0
+                        ->setParameter('status', self::SENHA_CANCELADA)
+                        ->setParameter('data', new DateTime())
+                        ->setParameter('usuario', $usuario)
+                        ->setParameter('id', $atendimento)
+                        ->setParameter('unidade', $unidade)
+                        ->execute() > 0
         ;
 
         if ($success) {
@@ -682,8 +703,7 @@ class AtendimentoService extends MetaModelService
      *
      * @return bool
      */
-    public function reativar(Atendimento $atendimento, Unidade $unidade)
-    {
+    public function reativar(Atendimento $atendimento, Unidade $unidade) {
         AppConfig::getInstance()->hook('attending.pre-reactivate', $atendimento);
 
         // reativa apenas se estiver finalizada (data fim diferente de nulo)
@@ -698,11 +718,11 @@ class AtendimentoService extends MetaModelService
                     e.unidade = :unidade AND
                     e.status IN (:statuses)
                 ')
-                ->setParameter('status', self::SENHA_EMITIDA)
-                ->setParameter('statuses', array(self::SENHA_CANCELADA, self::NAO_COMPARECEU))
-                ->setParameter('id', $atendimento)
-                ->setParameter('unidade', $unidade)
-                ->execute() > 0
+                        ->setParameter('status', self::SENHA_EMITIDA)
+                        ->setParameter('statuses', array(self::SENHA_CANCELADA, self::NAO_COMPARECEU))
+                        ->setParameter('id', $atendimento)
+                        ->setParameter('unidade', $unidade)
+                        ->execute() > 0
         ;
 
         if ($success) {
@@ -720,13 +740,12 @@ class AtendimentoService extends MetaModelService
      *
      * @return Atendimento
      */
-    public function ultimaSenhaUnidade($unidade)
-    {
+    public function ultimaSenhaUnidade($unidade) {
         return $this->em
-                ->createQuery("SELECT e FROM Novosga\Model\Atendimento e JOIN e.servicoUnidade su WHERE su.unidade = :unidade ORDER BY e.numeroSenha DESC")
-                ->setParameter('unidade', $unidade)
-                ->setMaxResults(1)
-                ->getOneOrNullResult()
+                        ->createQuery("SELECT e FROM Novosga\Model\Atendimento e JOIN e.servicoUnidade su WHERE su.unidade = :unidade ORDER BY e.numeroSenha DESC")
+                        ->setParameter('unidade', $unidade)
+                        ->setMaxResults(1)
+                        ->getOneOrNullResult()
         ;
     }
 
@@ -738,14 +757,13 @@ class AtendimentoService extends MetaModelService
      *
      * @return Atendimento
      */
-    public function ultimaSenhaServico($unidade, $servico)
-    {
+    public function ultimaSenhaServico($unidade, $servico) {
         return $this->em
-                ->createQuery("SELECT e FROM Novosga\Model\Atendimento e JOIN e.servicoUnidade su WHERE su.servico = :servico AND su.unidade = :unidade ORDER BY e.numeroSenha DESC")
-                ->setParameter('servico', $servico)
-                ->setParameter('unidade', $unidade)
-                ->setMaxResults(1)
-                ->getOneOrNullResult()
+                        ->createQuery("SELECT e FROM Novosga\Model\Atendimento e JOIN e.servicoUnidade su WHERE su.servico = :servico AND su.unidade = :unidade ORDER BY e.numeroSenha DESC")
+                        ->setParameter('servico', $servico)
+                        ->setParameter('unidade', $unidade)
+                        ->setMaxResults(1)
+                        ->getOneOrNullResult()
         ;
     }
 }
